@@ -364,11 +364,15 @@ async function openAnswerModal(questionId, isEdit = false) {
         <p style="margin-top:10px;">${escapeHTML(q.question)}</p>
     `;
     document.getElementById('answerText').value = q.answer || '';
-    document.getElementById('answerModal').classList.remove('hidden');
+    const modal = document.getElementById('answerModal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
 }
 
 function closeAnswerModal() {
-    document.getElementById('answerModal').classList.add('hidden');
+    const modal = document.getElementById('answerModal');
+    modal.classList.add('hidden');
+    modal.style.display = 'none';
     currentQuestionId = null;
 }
 
