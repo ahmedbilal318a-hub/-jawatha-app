@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطالب يسأل والمعلم يجيب - مدارس جواثا الأهلية</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container home-page">
+        <header class="main-header">
+            <div class="logo-section">
+                <div class="logo-circle">
+                    <img src="logo-icon.svg" alt="شعار مدارس جواثا" class="logo-img">
+                </div>
+                <div class="school-info">
+                    <h1 class="school-name">مدارس جواثا الأهلية</h1>
+                    <p class="school-en">Jawatha Private School</p>
+                    <p class="school-motto">العلم نور والمعرفة طريق النجاح</p>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="hero-section">
+                <div class="exam-badge">
+                    <span class="badge-icon">🌙</span>
+                    <span class="badge-text">معك ليلة الامتحان</span>
+                </div>
+                <h2 class="program-title">الطالب يسأل والمعلم يجيب</h2>
+                <p class="program-description">
+                    منصة تفاعلية تربط الطلاب بمعلميهم في أي وقت<br>
+                    اسأل معلمك مباشرة واحصل على إجابة مفصلة قبل الامتحان
+                </p>
+            </div>
+
+            <div class="cards-section">
+                <div class="role-card student-card" onclick="window.location.href='student.html'">
+                    <div class="card-icon-wrapper student-bg">
+                        <svg viewBox="0 0 64 64" class="card-icon">
+                            <path fill="white" d="M32 14c-7-3-15-4-23-3v38c8-1 16 0 23 3 7-3 15-4 23-3V11c-8-1-16 0-23 3zm-2 35c-6-2-12-3-19-3V15c7-1 13 0 19 2v32zm23-3c-7 0-13 1-19 3V17c6-2 12-3 19-2v31z"/>
+                            <circle fill="white" cx="32" cy="58" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>أنا طالب</h3>
+                    <p>اطرح سؤالك على المعلم واحصل على الإجابة</p>
+                    <button class="enter-btn student-btn">دخول الطالب ←</button>
+                </div>
+
+                <div class="role-card teacher-card" onclick="window.location.href='teacher-login.html'">
+                    <div class="card-icon-wrapper teacher-bg">
+                        <svg viewBox="0 0 64 64" class="card-icon">
+                            <path fill="white" d="M32 4C25 4 19 10 19 17s6 13 13 13 13-6 13-13S39 4 32 4zm0 30c-9 0-26 4-26 13v9h52v-9c0-9-17-13-26-13z"/>
+                        </svg>
+                    </div>
+                    <h3>أنا معلم</h3>
+                    <p>سجّل دخولك للإجابة على أسئلة طلابك</p>
+                    <button class="enter-btn teacher-btn">دخول المعلم ←</button>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <div class="feature-item">
+                    <span class="feature-icon">⚡</span>
+                    <h4>إجابات سريعة</h4>
+                    <p>تواصل مباشر مع المعلمين</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📚</span>
+                    <h4>جميع المواد</h4>
+                    <p>اختر المادة والمعلم</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">🔒</span>
+                    <h4>آمن وخاص</h4>
+                    <p>حساب محمي لكل معلم</p>
+                </div>
+                <div class="feature-item">
+                    <span class="feature-icon">📱</span>
+                    <h4>متاح دائماً</h4>
+                    <p>على جميع الأجهزة</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>© 2026 مدارس جواثا الأهلية - جميع الحقوق محفوظة</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

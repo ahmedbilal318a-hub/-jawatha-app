@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة المعلم - الطالب يسأل والمعلم يجيب</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header teacher-header">
+            <div class="header-content">
+                <div class="logo-mini">
+                    <img src="logo-icon.svg" alt="شعار مدارس جواثا" class="logo-img-small">
+                    <div>
+                        <h1 id="teacherWelcome">مرحباً بك</h1>
+                        <p id="teacherSubject">المادة الدراسية</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="index.html" class="back-btn">🏠 الرئيسية</a>
+                    <button id="logoutBtn" class="logout-btn">🚪 خروج</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <div class="stats-row">
+                <div class="stat-card">
+                    <span class="stat-number" id="totalQuestions">0</span>
+                    <span class="stat-label">إجمالي الأسئلة</span>
+                </div>
+                <div class="stat-card pending">
+                    <span class="stat-number" id="pendingQuestions">0</span>
+                    <span class="stat-label">أسئلة بانتظار الإجابة</span>
+                </div>
+                <div class="stat-card answered">
+                    <span class="stat-number" id="answeredQuestions">0</span>
+                    <span class="stat-label">أسئلة تمت الإجابة عليها</span>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pending">⏳ بانتظار الإجابة</button>
+                <button class="tab-btn" data-tab="answered">✅ تمت الإجابة</button>
+            </div>
+
+            <section id="pending-tab" class="tab-content active">
+                <div class="form-card">
+                    <h2>📥 أسئلة طلابي بانتظار الإجابة</h2>
+                    <div id="pendingList" class="questions-list">
+                        <p class="empty-state">لا توجد أسئلة جديدة حالياً</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="answered-tab" class="tab-content">
+                <div class="form-card">
+                    <h2>✅ الأسئلة التي تمت الإجابة عليها</h2>
+                    <div id="answeredList" class="questions-list">
+                        <p class="empty-state">لم تتم الإجابة على أي سؤال بعد</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal للإجابة -->
+    <div id="answerModal" class="modal hidden">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAnswerModal()">×</button>
+            <h2>✍️ كتابة إجابة</h2>
+            <div id="modalQuestionInfo" class="modal-question"></div>
+            <textarea id="answerText" rows="8" placeholder="اكتب إجابتك المفصلة هنا..."></textarea>
+            <div class="modal-actions">
+                <button onclick="submitAnswer()" class="submit-btn teacher-submit">📨 إرسال الإجابة</button>
+                <button onclick="closeAnswerModal()" class="cancel-btn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script src="script.js"></script>
+    <script>
+        initTeacherPage();
+    </script>
+</body>
+</html>

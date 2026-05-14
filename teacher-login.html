@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول المعلم - الطالب يسأل والمعلم يجيب</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container login-page">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="logo.svg" alt="شعار مدارس جواثا" class="login-logo-img">
+            </div>
+            <h1>تسجيل دخول المعلم</h1>
+            <p class="login-subtitle">منصة "الطالب يسأل والمعلم يجيب"</p>
+
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">اسم المستخدم</label>
+                    <input type="text" id="username" required placeholder="اسم المستخدم">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" required placeholder="كلمة المرور">
+                </div>
+
+                <button type="submit" class="submit-btn teacher-submit">🔓 دخول</button>
+            </form>
+
+            <div id="loginError" class="error-msg"></div>
+
+            <div class="login-footer">
+                <a href="index.html" class="link-btn">→ العودة للرئيسية</a>
+                <button id="showCredentialsBtn" class="link-btn">📋 عرض حسابات المعلمين (للاختبار)</button>
+            </div>
+
+            <div id="credentialsList" class="credentials-list hidden">
+                <h4>حسابات المعلمين الجاهزة:</h4>
+                <div id="credentialsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script src="script.js"></script>
+    <script>
+        initLoginPage();
+    </script>
+</body>
+</html>

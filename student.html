@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>واجهة الطالب - الطالب يسأل والمعلم يجيب</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Amiri:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header student-header">
+            <div class="header-content">
+                <div class="logo-mini">
+                    <img src="logo-icon.svg" alt="شعار مدارس جواثا" class="logo-img-small">
+                    <div>
+                        <h1>واجهة الطالب</h1>
+                        <p>مدارس جواثا الأهلية - اطرح سؤالك واستلم إجابة المعلم</p>
+                    </div>
+                </div>
+                <a href="index.html" class="back-btn">→ الرئيسية</a>
+            </div>
+        </header>
+
+        <main class="dashboard">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="ask">✍️ اطرح سؤالاً</button>
+                <button class="tab-btn" data-tab="my-questions">📋 أسئلتي وأجوبتها</button>
+            </div>
+
+            <section id="ask-tab" class="tab-content active">
+                <div class="form-card">
+                    <h2>📝 اطرح سؤالك على المعلم</h2>
+                    <form id="askForm">
+                        <div class="form-group">
+                            <label for="studentName">اسم الطالب</label>
+                            <input type="text" id="studentName" required placeholder="اكتب اسمك هنا">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="studentGrade">الصف الدراسي</label>
+                            <select id="studentGrade" required>
+                                <option value="">-- اختر الصف --</option>
+                                <option>الصف الأول الثانوي</option>
+                                <option>الصف الثاني الثانوي</option>
+                                <option>الصف الثالث الثانوي</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="teacherSelect">اختر المعلم</label>
+                            <select id="teacherSelect" required>
+                                <option value="">-- اختر المعلم --</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="subject">عنوان السؤال</label>
+                            <input type="text" id="subject" required placeholder="مثال: الدرس الثالث - معادلات الدرجة الثانية">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="questionText">نص السؤال</label>
+                            <textarea id="questionText" required rows="6" placeholder="اكتب سؤالك بالتفصيل هنا..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn student-submit">📤 إرسال السؤال</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="my-questions-tab" class="tab-content">
+                <div class="form-card">
+                    <h2>📋 أسئلتي السابقة</h2>
+                    <div class="search-bar">
+                        <input type="text" id="searchStudent" placeholder="🔍 ابحث باسمك لعرض أسئلتك...">
+                        <button id="searchBtn" class="action-btn">عرض</button>
+                    </div>
+                    <div id="myQuestionsList" class="questions-list">
+                        <p class="empty-state">اكتب اسمك في خانة البحث لعرض أسئلتك وإجاباتها</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-init.js"></script>
+    <script src="script.js"></script>
+    <script>
+        initStudentPage();
+    </script>
+</body>
+</html>
