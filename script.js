@@ -32,8 +32,95 @@ async function getQuestions() {
         answer: q.answer,
         answeredAt: q.answered_at,
         createdAt: q.created_at,
-        status: q.status
+        status: q.status,
+        questionAttachmentUrl: q.question_attachment_url,
+        questionAttachmentName: q.question_attachment_name,
+        answerAttachmentUrl: q.answer_attachment_url,
+        answerAttachmentName: q.answer_attachment_name
     }));
+}
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+async function uploadAttachment(file) {
+    if (!file) return null;
+    if (file.size > MAX_FILE_SIZE) {
+        showToast('⚠️ حجم الملف كبير جداً (الحد الأقصى 10 ميجا)', 'error');
+        return null;
+    }
+    const ext = file.name.includes('.') ? file.name.split('.').pop() : 'bin';
+    const safeName = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}.${ext}`;
+    const { error } = await supabaseClient.storage
+        .from('attachments')
+        .upload(safeName, file, { cacheControl: '3600', upsert: false });
+    if (error) {
+        console.error('upload:', error);
+        showToast('❌ فشل رفع الملف: ' + error.message, 'error');
+        return null;
+    }
+    const { data } = supabaseClient.storage.from('attachments').getPublicUrl(safeName);
+    return { url: data.publicUrl, name: file.name };
+}
+
+function isImageUrl(url, name) {
+    const s = (name || url || '').toLowerCase();
+    return /\.(png|jpe?g|gif|webp|svg|bmp)(\?|$)/.test(s);
+}
+
+function renderAttachment(url, name, label = '📎 المرفق') {
+    if (!url) return '';
+    const safeName = escapeHTML(name || 'ملف مرفق');
+    const safeUrl = escapeHTML(url);
+    if (isImageUrl(url, name)) {
+        return `
+            <div class="attachment-card">
+                <div class="attachment-label">${label}</div>
+                <a href="${safeUrl}" target="_blank" rel="noopener">
+                    <img src="${safeUrl}" alt="${safeName}" class="attachment-img">
+                </a>
+                <div class="attachment-name">${safeName}</div>
+            </div>`;
+    }
+    return `
+        <div class="attachment-card">
+            <div class="attachment-label">${label}</div>
+            <a href="${safeUrl}" target="_blank" rel="noopener" class="attachment-link">
+                📄 ${safeName}
+            </a>
+        </div>`;
+}
+
+function setupFilePreview(inputId, previewId) {
+    const input = document.getElementById(inputId);
+    const preview = document.getElementById(previewId);
+    if (!input || !preview) return;
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (!file) {
+            preview.classList.add('hidden');
+            preview.innerHTML = '';
+            return;
+        }
+        if (file.size > MAX_FILE_SIZE) {
+            showToast('⚠️ حجم الملف كبير جداً (الحد الأقصى 10 ميجا)', 'error');
+            input.value = '';
+            preview.classList.add('hidden');
+            return;
+        }
+        const sizeKB = (file.size / 1024).toFixed(1);
+        preview.classList.remove('hidden');
+        if (file.type.startsWith('image/')) {
+            const url = URL.createObjectURL(file);
+            preview.innerHTML = `
+                <img src="${url}" alt="معاينة" class="preview-img">
+                <div class="preview-info">📷 ${escapeHTML(file.name)} (${sizeKB} KB)</div>
+            `;
+        } else {
+            preview.innerHTML = `
+                <div class="preview-info">📄 ${escapeHTML(file.name)} (${sizeKB} KB)</div>
+            `;
+        }
+    });
 }
 
 async function loginTeacher(username, password) {
@@ -107,6 +194,7 @@ async function initStudentPage() {
     await setupTeacherSearch();
     setupAskForm();
     setupSearchQuestions();
+    setupFilePreview('questionFile', 'questionFilePreview');
 }
 
 function normalizeArabic(str) {
@@ -205,6 +293,22 @@ function setupAskForm() {
         const originalText = submitBtn.textContent;
         submitBtn.textContent = '⏳ جاري الإرسال...';
 
+        const fileInput = document.getElementById('questionFile');
+        const file = fileInput && fileInput.files[0];
+        if (file) {
+            submitBtn.textContent = '⏳ جاري رفع المرفق...';
+            const att = await uploadAttachment(file);
+            if (att) {
+                newQuestion.question_attachment_url = att.url;
+                newQuestion.question_attachment_name = att.name;
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+                return;
+            }
+            submitBtn.textContent = '⏳ جاري الإرسال...';
+        }
+
         const { error } = await supabaseClient.from('questions').insert(newQuestion);
 
         submitBtn.disabled = false;
@@ -222,6 +326,8 @@ function setupAskForm() {
         document.getElementById('teacherSelect').value = '';
         const badge = document.getElementById('selectedTeacherBadge');
         if (badge) badge.classList.add('hidden');
+        const preview = document.getElementById('questionFilePreview');
+        if (preview) { preview.classList.add('hidden'); preview.innerHTML = ''; }
     });
 }
 
@@ -271,10 +377,12 @@ function renderStudentQuestions(questions, container) {
             </div>
             <div class="question-title">📌 ${escapeHTML(q.subject)}</div>
             <div class="question-text">${escapeHTML(q.question)}</div>
+            ${renderAttachment(q.questionAttachmentUrl, q.questionAttachmentName, '📎 مرفق السؤال')}
             ${q.answer ? `
                 <div class="answer-section">
                     <h4>💬 إجابة المعلم:</h4>
                     <div class="answer-text">${escapeHTML(q.answer)}</div>
+                    ${renderAttachment(q.answerAttachmentUrl, q.answerAttachmentName, '📎 مرفق الإجابة')}
                     <div class="answer-meta">تمت الإجابة في: ${formatDate(q.answeredAt)}</div>
                 </div>
             ` : '<p style="color: var(--text-light); font-style: italic; margin-top:10px;">⏳ في انتظار رد المعلم...</p>'}
@@ -338,6 +446,7 @@ async function initTeacherPage() {
 
     setupTabs();
     setupLogout();
+    setupFilePreview('answerFile', 'answerFilePreview');
     await renderTeacherQuestions();
 }
 
@@ -377,6 +486,7 @@ async function renderTeacherQuestions() {
                 </div>
                 <div class="question-title">📌 ${escapeHTML(q.subject)}</div>
                 <div class="question-text">${escapeHTML(q.question)}</div>
+                ${renderAttachment(q.questionAttachmentUrl, q.questionAttachmentName, '📎 مرفق السؤال')}
                 <button class="answer-btn" onclick="openAnswerModal('${q.id}')">✍️ كتابة الإجابة</button>
             </div>
         `).join('');
@@ -398,9 +508,11 @@ async function renderTeacherQuestions() {
                 </div>
                 <div class="question-title">📌 ${escapeHTML(q.subject)}</div>
                 <div class="question-text">${escapeHTML(q.question)}</div>
+                ${renderAttachment(q.questionAttachmentUrl, q.questionAttachmentName, '📎 مرفق السؤال')}
                 <div class="answer-section">
                     <h4>💬 إجابتك:</h4>
                     <div class="answer-text">${escapeHTML(q.answer)}</div>
+                    ${renderAttachment(q.answerAttachmentUrl, q.answerAttachmentName, '📎 مرفق الإجابة')}
                     <div class="answer-meta">تاريخ الإجابة: ${formatDate(q.answeredAt)}</div>
                 </div>
                 <button class="answer-btn" onclick="openAnswerModal('${q.id}', true)">✏️ تعديل الإجابة</button>
@@ -422,8 +534,13 @@ async function openAnswerModal(questionId, isEdit = false) {
         <h4>سؤال من: ${escapeHTML(q.studentName)} (${escapeHTML(q.studentGrade)})</h4>
         <p><strong>${escapeHTML(q.subject)}</strong></p>
         <p style="margin-top:10px;">${escapeHTML(q.question)}</p>
+        ${renderAttachment(q.questionAttachmentUrl, q.questionAttachmentName, '📎 مرفق السؤال')}
     `;
     document.getElementById('answerText').value = q.answer || '';
+    const answerFile = document.getElementById('answerFile');
+    if (answerFile) answerFile.value = '';
+    const answerPreview = document.getElementById('answerFilePreview');
+    if (answerPreview) { answerPreview.classList.add('hidden'); answerPreview.innerHTML = ''; }
     const modal = document.getElementById('answerModal');
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
@@ -449,11 +566,29 @@ async function submitAnswer() {
     const original = sendBtn.textContent;
     sendBtn.textContent = '⏳ جاري الإرسال...';
 
-    const { error } = await supabaseClient.from('questions').update({
+    const update = {
         answer: answerText,
         answered_at: new Date().toISOString(),
         status: 'answered'
-    }).eq('id', currentQuestionId);
+    };
+
+    const fileInput = document.getElementById('answerFile');
+    const file = fileInput && fileInput.files[0];
+    if (file) {
+        sendBtn.textContent = '⏳ جاري رفع المرفق...';
+        const att = await uploadAttachment(file);
+        if (att) {
+            update.answer_attachment_url = att.url;
+            update.answer_attachment_name = att.name;
+        } else {
+            sendBtn.disabled = false;
+            sendBtn.textContent = original;
+            return;
+        }
+        sendBtn.textContent = '⏳ جاري الإرسال...';
+    }
+
+    const { error } = await supabaseClient.from('questions').update(update).eq('id', currentQuestionId);
 
     sendBtn.disabled = false;
     sendBtn.textContent = original;
@@ -463,6 +598,10 @@ async function submitAnswer() {
         showToast('❌ حدث خطأ في إرسال الإجابة', 'error');
         return;
     }
+
+    if (fileInput) fileInput.value = '';
+    const preview = document.getElementById('answerFilePreview');
+    if (preview) { preview.classList.add('hidden'); preview.innerHTML = ''; }
 
     closeAnswerModal();
     await renderTeacherQuestions();

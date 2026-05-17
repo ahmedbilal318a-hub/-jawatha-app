@@ -82,6 +82,13 @@
                             <textarea id="questionText" required rows="6" placeholder="اكتب سؤالك بالتفصيل هنا..."></textarea>
                         </div>
 
+                        <div class="form-group">
+                            <label for="questionFile">📎 إرفاق ملف أو صورة (اختياري)</label>
+                            <input type="file" id="questionFile" class="file-input" accept="image/*,.pdf,.doc,.docx,.txt">
+                            <div id="questionFilePreview" class="file-preview hidden"></div>
+                            <small class="file-hint">الحد الأقصى: 10 ميجا — يدعم الصور والـPDF و Word</small>
+                        </div>
+
                         <button type="submit" class="submit-btn student-submit">📤 إرسال السؤال</button>
                     </form>
                 </div>

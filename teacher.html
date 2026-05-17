@@ -73,6 +73,14 @@
             <h2>✍️ كتابة إجابة</h2>
             <div id="modalQuestionInfo" class="modal-question"></div>
             <textarea id="answerText" rows="8" placeholder="اكتب إجابتك المفصلة هنا..."></textarea>
+
+            <div class="form-group" style="margin-top:15px;">
+                <label for="answerFile">📎 إرفاق ملف أو صورة (اختياري)</label>
+                <input type="file" id="answerFile" class="file-input" accept="image/*,.pdf,.doc,.docx,.txt">
+                <div id="answerFilePreview" class="file-preview hidden"></div>
+                <small class="file-hint">الحد الأقصى: 10 ميجا — يدعم الصور والـPDF و Word</small>
+            </div>
+
             <div class="modal-actions">
                 <button onclick="submitAnswer()" class="submit-btn teacher-submit">📨 إرسال الإجابة</button>
                 <button onclick="closeAnswerModal()" class="cancel-btn">إلغاء</button>
