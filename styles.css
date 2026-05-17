@@ -98,7 +98,7 @@ body {
     width: 100%;
     height: auto;
     display: block;
-    align-self: flex-start;
+    align-self: flex-end;
 }
 
 .header-right {
