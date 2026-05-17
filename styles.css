@@ -91,15 +91,14 @@ body {
     width: 100%;
     height: auto;
     display: block;
-    mix-blend-mode: multiply;
 }
 
 .cognia-logo {
-    max-width: 280px;
+    max-width: 130px;
     width: 100%;
     height: auto;
     display: block;
-    mix-blend-mode: multiply;
+    align-self: flex-start;
 }
 
 .header-right {
@@ -113,7 +112,6 @@ body {
     width: 100%;
     height: auto;
     display: block;
-    mix-blend-mode: multiply;
 }
 
 .hero-section {
