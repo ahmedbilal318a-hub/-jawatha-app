@@ -12,7 +12,7 @@
         <header class="page-header student-header">
             <div class="header-content">
                 <div class="logo-mini">
-                    <img src="logo.jpg" alt="شعار مدارس جواثا" class="logo-img-small">
+                    <img src="jawatha-logo-new.jpeg" alt="شعار مدارس جواثا" class="logo-img-small">
                     <div>
                         <h1>واجهة الطالب</h1>
                         <p>مدارس جواثا الأهلية - اطرح سؤالك واستلم إجابة المعلم</p>
@@ -48,10 +48,13 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="teacherSelect">اختر المعلم</label>
-                            <select id="teacherSelect" required>
-                                <option value="">-- اختر المعلم --</option>
-                            </select>
+                            <label for="teacherSearch">معلمو القسم الأدبي</label>
+                            <div class="searchable-select" id="teacherSearchWrapper">
+                                <input type="text" id="teacherSearch" autocomplete="off" placeholder="🔍 اكتب اسم المعلم أو أي حرف للبحث...">
+                                <input type="hidden" id="teacherSelect" required>
+                                <div class="search-dropdown hidden" id="teacherDropdown"></div>
+                                <div class="selected-teacher hidden" id="selectedTeacherBadge"></div>
+                            </div>
                         </div>
 
                         <div class="form-group">

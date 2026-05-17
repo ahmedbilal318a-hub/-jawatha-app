@@ -100,22 +100,78 @@ function setupTabs() {
 }
 
 // ============ صفحة الطالب ============
+let cachedTeachers = [];
+
 async function initStudentPage() {
     setupTabs();
-    await populateTeachersDropdown();
+    await setupTeacherSearch();
     setupAskForm();
     setupSearchQuestions();
 }
 
-async function populateTeachersDropdown() {
-    const select = document.getElementById('teacherSelect');
-    if (!select) return;
-    const teachers = await getTeachers();
-    teachers.forEach(t => {
-        const opt = document.createElement('option');
-        opt.value = t.username;
-        opt.textContent = `${t.name} - ${t.subject}`;
-        select.appendChild(opt);
+function normalizeArabic(str) {
+    return (str || '')
+        .replace(/[إأآا]/g, 'ا')
+        .replace(/ى/g, 'ي')
+        .replace(/ة/g, 'ه')
+        .replace(/[ًٌٍَُِّْ]/g, '')
+        .toLowerCase()
+        .trim();
+}
+
+async function setupTeacherSearch() {
+    const searchInput = document.getElementById('teacherSearch');
+    const hiddenInput = document.getElementById('teacherSelect');
+    const dropdown = document.getElementById('teacherDropdown');
+    const badge = document.getElementById('selectedTeacherBadge');
+    const wrapper = document.getElementById('teacherSearchWrapper');
+    if (!searchInput || !dropdown) return;
+
+    cachedTeachers = await getTeachers();
+
+    const renderResults = (query) => {
+        const q = normalizeArabic(query);
+        const list = q === ''
+            ? cachedTeachers
+            : cachedTeachers.filter(t => normalizeArabic(t.name).includes(q));
+
+        if (list.length === 0) {
+            dropdown.innerHTML = '<div class="search-empty">لا يوجد معلم بهذا الاسم</div>';
+        } else {
+            dropdown.innerHTML = list.map(t => `
+                <div class="search-item" data-username="${escapeHTML(t.username)}" data-name="${escapeHTML(t.name)}">
+                    ${escapeHTML(t.name)}
+                </div>
+            `).join('');
+        }
+        dropdown.classList.remove('hidden');
+    };
+
+    const selectTeacher = (username, name) => {
+        hiddenInput.value = username;
+        searchInput.value = name;
+        badge.textContent = '✅ تم اختيار المعلم: ' + name;
+        badge.classList.remove('hidden');
+        dropdown.classList.add('hidden');
+    };
+
+    searchInput.addEventListener('focus', () => renderResults(searchInput.value));
+    searchInput.addEventListener('input', () => {
+        hiddenInput.value = '';
+        badge.classList.add('hidden');
+        renderResults(searchInput.value);
+    });
+
+    dropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.search-item');
+        if (!item) return;
+        selectTeacher(item.dataset.username, item.dataset.name);
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
     });
 }
 
@@ -125,12 +181,12 @@ function setupAskForm() {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = form.querySelector('button[type="submit"]');
-        const teachers = await getTeachers();
         const teacherUsername = document.getElementById('teacherSelect').value;
+        const teachers = cachedTeachers.length ? cachedTeachers : await getTeachers();
         const teacher = teachers.find(t => t.username === teacherUsername);
 
         if (!teacher) {
-            showToast('⚠️ يرجى اختيار معلم', 'error');
+            showToast('⚠️ يرجى اختيار معلم من قائمة البحث', 'error');
             return;
         }
 
@@ -162,6 +218,10 @@ function setupAskForm() {
 
         showToast('✅ تم إرسال سؤالك بنجاح للمعلم ' + teacher.name, 'success');
         form.reset();
+        document.getElementById('teacherSearch').value = '';
+        document.getElementById('teacherSelect').value = '';
+        const badge = document.getElementById('selectedTeacherBadge');
+        if (badge) badge.classList.add('hidden');
     });
 }
 
