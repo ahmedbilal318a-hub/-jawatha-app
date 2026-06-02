@@ -1263,6 +1263,25 @@ body {
     }
 }
 
+/* ============ CREDIT LINE ============ */
+.credit-line {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+}
+
+.page-credit {
+    text-align: center;
+    padding: 20px 10px;
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+}
+
 /* ============ AI ASSISTANT ============ */
 :root {
     --ai-color: #6d28d9;
