@@ -1282,6 +1282,15 @@ body {
     color: var(--text-light);
 }
 
+/* في صفحة الدخول (توسيط أفقي) نثبّت السطر أسفل الصفحة بدل جانب البطاقة */
+.login-page .page-credit {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 16px 10px;
+}
+
 /* ============ AI ASSISTANT ============ */
 :root {
     --ai-color: #6d28d9;
