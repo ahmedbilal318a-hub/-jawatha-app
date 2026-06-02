@@ -1217,6 +1217,7 @@ body {
 
     .cognia-logo {
         margin-right: 0;
+        align-self: center;
     }
 
     .brand-logo {
