@@ -15,6 +15,7 @@
                     <img src="jawatha-logo-new.png" alt="شعار مدارس جواثا" class="logo-img-small">
                     <div>
                         <h1>الطالب يسأل والمعلم يجيب</h1>
+                        <p class="trial-badge">🧪 نسخة تجريبية</p>
                         <p>مدارس جواثا الأهلية - اطرح سؤالك واستلم إجابة المعلم</p>
                     </div>
                 </div>
@@ -60,16 +61,31 @@
                                     <option>الصف الثاني الثانوي</option>
                                     <option>الصف الثالث الثانوي</option>
                                 </optgroup>
+                                <optgroup label="المرحلة الدولية">
+                                    <option>أول دولي</option>
+                                    <option>ثاني دولي</option>
+                                    <option>ثالث دولي</option>
+                                </optgroup>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="teacherSearch">معلمو القسم الأدبي</label>
-                            <div class="searchable-select" id="teacherSearchWrapper">
-                                <input type="text" id="teacherSearch" autocomplete="off" placeholder="🔍 اكتب اسم المعلم أو أي حرف للبحث...">
+                            <label>اختر معلمك من القسم المناسب</label>
+                            <small class="file-hint" style="display:block; margin-bottom:10px;">اختر معلماً واحداً فقط من إحدى الخانتين</small>
+
+                            <label for="teacherSearchLit" class="sub-label">📚 معلمو القسم الأدبي</label>
+                            <div class="searchable-select" id="teacherSearchWrapperLit">
+                                <input type="text" id="teacherSearchLit" autocomplete="off" placeholder="🔍 اكتب اسم معلم القسم الأدبي...">
+                                <div class="search-dropdown hidden" id="teacherDropdownLit"></div>
+                                <div class="selected-teacher hidden" id="selectedTeacherBadgeLit"></div>
+                            </div>
+
+                            <label for="teacherSearchEng" class="sub-label" style="margin-top:14px;">🌐 معلمو اللغة الإنجليزية</label>
+                            <div class="searchable-select" id="teacherSearchWrapperEng">
+                                <input type="text" id="teacherSearchEng" autocomplete="off" placeholder="🔍 اكتب اسم معلم اللغة الإنجليزية...">
                                 <input type="hidden" id="teacherSelect" required>
-                                <div class="search-dropdown hidden" id="teacherDropdown"></div>
-                                <div class="selected-teacher hidden" id="selectedTeacherBadge"></div>
+                                <div class="search-dropdown hidden" id="teacherDropdownEng"></div>
+                                <div class="selected-teacher hidden" id="selectedTeacherBadgeEng"></div>
                             </div>
                         </div>
 

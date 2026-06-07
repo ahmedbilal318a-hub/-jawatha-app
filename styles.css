@@ -160,6 +160,19 @@ body {
     margin: 0 auto;
 }
 
+.trial-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 5px 16px;
+    border-radius: 999px;
+    margin: 0 auto 16px;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+}
+
 .cards-section {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -758,6 +771,25 @@ body {
     background: var(--student-light);
     color: var(--student-color);
     font-weight: 700;
+}
+
+.sub-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--student-color);
+    margin-bottom: 6px;
+}
+
+.search-group-label {
+    padding: 8px 16px;
+    background: var(--student-light);
+    color: var(--student-color);
+    font-size: 13px;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
 }
 
 .search-empty {

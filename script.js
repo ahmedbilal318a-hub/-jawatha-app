@@ -208,58 +208,82 @@ function normalizeArabic(str) {
 }
 
 async function setupTeacherSearch() {
-    const searchInput = document.getElementById('teacherSearch');
     const hiddenInput = document.getElementById('teacherSelect');
-    const dropdown = document.getElementById('teacherDropdown');
-    const badge = document.getElementById('selectedTeacherBadge');
-    const wrapper = document.getElementById('teacherSearchWrapper');
-    if (!searchInput || !dropdown) return;
+    if (!hiddenInput) return;
 
     cachedTeachers = await getTeachers();
 
-    const renderResults = (query) => {
-        const q = normalizeArabic(query);
-        const list = q === ''
-            ? cachedTeachers
-            : cachedTeachers.filter(t => normalizeArabic(t.name).includes(q));
+    // تعريف الخانتين: كل خانة تعرض معلمي قسم معيّن فقط
+    const boxConfigs = [
+        { subject: 'القسم الأدبي',           search: 'teacherSearchLit', dropdown: 'teacherDropdownLit', badge: 'selectedTeacherBadgeLit', wrapper: 'teacherSearchWrapperLit' },
+        { subject: 'معلمو اللغة الإنجليزية', search: 'teacherSearchEng', dropdown: 'teacherDropdownEng', badge: 'selectedTeacherBadgeEng', wrapper: 'teacherSearchWrapperEng' }
+    ];
 
-        if (list.length === 0) {
-            dropdown.innerHTML = '<div class="search-empty">لا يوجد معلم بهذا الاسم</div>';
-        } else {
-            dropdown.innerHTML = list.map(t => `
-                <div class="search-item" data-username="${escapeHTML(t.username)}" data-name="${escapeHTML(t.name)}">
-                    ${escapeHTML(t.name)}
-                </div>
-            `).join('');
-        }
-        dropdown.classList.remove('hidden');
+    const boxes = boxConfigs.map(c => ({
+        subject: c.subject,
+        searchEl: document.getElementById(c.search),
+        dropdownEl: document.getElementById(c.dropdown),
+        badgeEl: document.getElementById(c.badge),
+        wrapperEl: document.getElementById(c.wrapper),
+        teachers: cachedTeachers.filter(t => (t.subject || 'القسم الأدبي') === c.subject)
+    })).filter(b => b.searchEl && b.dropdownEl);
+
+    // عند الاختيار من خانة، نفرّغ الخانة الأخرى (الطالب يختار معلماً واحداً فقط)
+    const clearOthers = (except) => {
+        boxes.forEach(b => {
+            if (b === except) return;
+            b.searchEl.value = '';
+            b.badgeEl.classList.add('hidden');
+            b.dropdownEl.classList.add('hidden');
+        });
     };
 
-    const selectTeacher = (username, name) => {
-        hiddenInput.value = username;
-        searchInput.value = name;
-        badge.textContent = '✅ تم اختيار المعلم: ' + name;
-        badge.classList.remove('hidden');
-        dropdown.classList.add('hidden');
-    };
+    boxes.forEach(box => {
+        const renderResults = (query) => {
+            const q = normalizeArabic(query);
+            const list = q === ''
+                ? box.teachers
+                : box.teachers.filter(t => normalizeArabic(t.name).includes(q));
 
-    searchInput.addEventListener('focus', () => renderResults(searchInput.value));
-    searchInput.addEventListener('input', () => {
-        hiddenInput.value = '';
-        badge.classList.add('hidden');
-        renderResults(searchInput.value);
-    });
+            if (list.length === 0) {
+                box.dropdownEl.innerHTML = '<div class="search-empty">لا يوجد معلم بهذا الاسم</div>';
+            } else {
+                box.dropdownEl.innerHTML = list.map(t => `
+                    <div class="search-item" data-username="${escapeHTML(t.username)}" data-name="${escapeHTML(t.name)}">
+                        ${escapeHTML(t.name)}
+                    </div>
+                `).join('');
+            }
+            box.dropdownEl.classList.remove('hidden');
+        };
 
-    dropdown.addEventListener('click', (e) => {
-        const item = e.target.closest('.search-item');
-        if (!item) return;
-        selectTeacher(item.dataset.username, item.dataset.name);
-    });
+        const selectTeacher = (username, name) => {
+            clearOthers(box);
+            hiddenInput.value = username;
+            box.searchEl.value = name;
+            box.badgeEl.textContent = '✅ تم اختيار المعلم: ' + name;
+            box.badgeEl.classList.remove('hidden');
+            box.dropdownEl.classList.add('hidden');
+        };
 
-    document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) {
-            dropdown.classList.add('hidden');
-        }
+        box.searchEl.addEventListener('focus', () => renderResults(box.searchEl.value));
+        box.searchEl.addEventListener('input', () => {
+            hiddenInput.value = '';
+            box.badgeEl.classList.add('hidden');
+            renderResults(box.searchEl.value);
+        });
+
+        box.dropdownEl.addEventListener('click', (e) => {
+            const item = e.target.closest('.search-item');
+            if (!item) return;
+            selectTeacher(item.dataset.username, item.dataset.name);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!box.wrapperEl.contains(e.target)) {
+                box.dropdownEl.classList.add('hidden');
+            }
+        });
     });
 }
 
@@ -322,10 +346,15 @@ function setupAskForm() {
 
         showToast('✅ تم إرسال سؤالك بنجاح للمعلم ' + teacher.name, 'success');
         form.reset();
-        document.getElementById('teacherSearch').value = '';
+        ['teacherSearchLit', 'teacherSearchEng'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
         document.getElementById('teacherSelect').value = '';
-        const badge = document.getElementById('selectedTeacherBadge');
-        if (badge) badge.classList.add('hidden');
+        ['selectedTeacherBadgeLit', 'selectedTeacherBadgeEng'].forEach(id => {
+            const badge = document.getElementById(id);
+            if (badge) badge.classList.add('hidden');
+        });
         const preview = document.getElementById('questionFilePreview');
         if (preview) { preview.classList.add('hidden'); preview.innerHTML = ''; }
     });
